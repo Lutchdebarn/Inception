@@ -4,6 +4,7 @@ RUN apk add --no-cache mariadb mariadb-client
 
 COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
-RUN chmod +755 tools/entrypoint.sh
+COPY tools/entrypoint /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT [ "./tools/entrypoint.sh" ]
