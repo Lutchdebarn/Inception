@@ -8,3 +8,4 @@ COPY tools/entrypoint /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT [ "./tools/entrypoint.sh" ]
+

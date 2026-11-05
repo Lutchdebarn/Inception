@@ -8,7 +8,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
 
 RUN mkdir -p var/www/html
 
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY conf/nginx.conf /etc/nginx/http.d/nginx.conf
 
 EXPOSE 443
 CMD [ "nginx", "-g", "daemon off;" ]
