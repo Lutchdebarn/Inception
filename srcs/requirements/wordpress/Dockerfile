@@ -1,7 +1,7 @@
 FROM alpine:3.23
 
 
-#connexion a mariadb, telechargement des mise a jours et pr que wordpress
+#connexion a mariadb, telechargement des mise a jours pr que wordpress
 #parle en https
 #traitement du texte, du XML et des images
 RUN apk add --no-cache \
@@ -11,7 +11,14 @@ RUN apk add --no-cache \
 	php83-session php83-zip php83-fileinfo php83-tokenizer \
 	curl mariadb-client
 
+RUN ln -s /usr/bin/php83 /usr/bin/php
+
 COPY conf/www.conf /etc/php83/php-fpm.d/www.conf
 
 RUN curl -fsSL -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
 	&& chmod +x /usr/local/bin/wp
+
+COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
