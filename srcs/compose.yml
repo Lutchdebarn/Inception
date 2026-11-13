@@ -25,6 +25,8 @@ services:
     build:
       context: requirements/nginx
       dockerfile: Dockerfile
+    volumes:
+      - wordpress:/var/www/html
     depends_on:
       - wordpress
     ports:
@@ -39,6 +41,8 @@ services:
       context: requirements/wordpress
       dockerfile: Dockerfile
     env_file: .env
+    volumes:
+     - wordpress:/var/www/html
     depends_on:
       mariadb:
         condition: service_healthy
@@ -47,12 +51,18 @@ services:
       - "9000"
 
 volumes:
-  db_data
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ludebarn/data/mariadb
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ludebarn/data/wordpress
 networks:
-  inception
-
-
-#Ce qui reste à corriger
-# Les deux sections du bas ne sont pas du YAML valide. db_data et inception ont toujours besoin de deux-points. Pour que db_data écrive dans /home/ludebarn/data/mariadb, il lui faut en dessous driver: local et driver_opts: avec trois clés : type: none, o: bind et device: suivi du chemin.
-# Le volume WordPress n'existe toujours pas. Il doit être déclaré en bas, comme db_data, avec son propre chemin. Puis il doit apparaître dans la liste volumes: de WordPress et de nginx, au même chemin /var/www/html.
-# Les dossiers doivent exister avant le lancement : /home/ludebarn/data/mariadb et /home/ludebarn/data/wordpress, sinon le bind échoue.
+  inception:
+    driver: bridge
