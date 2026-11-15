@@ -6,7 +6,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
 	-keyout /etc/nginx/ssl/inception.key \
 	-subj "/C=CH/ST=VD/L=Lausanne/O=42/OU=42/CN=ludebarn.42.fr/UID=ludebarn"
 
-RUN mkdir -p var/www/html
+RUN mkdir -p /var/www/html
 
 COPY conf/nginx.conf /etc/nginx/http.d/nginx.conf
 
