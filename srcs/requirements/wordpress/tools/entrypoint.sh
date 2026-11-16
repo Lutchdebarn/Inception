@@ -2,6 +2,12 @@
 
 set -e
 
+: "${WP_ADMIN_EMAIL:?Invalide email}"
+if echo "$WP_ADMIN_USER" | grep -qi admin; then
+	echo "Error: WP_ADMIN_USER contains admin" >&2
+	exit 1
+fi
+
 if [ ! -f /var/www/html/wp-config.php ]; then
 	wp core download --allow-root --path=/var/www/html
 
@@ -13,7 +19,6 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 		--url="https://$DOMAIN_NAME" --title="$WP_TITLE" \
 		--admin_user="$WP_ADMIN_USER" --admin_password="$WP_ADMIN_PASSWORD" \
 		--admin_email="$WP_ADMIN_EMAIL" --skip-email
-
 	wp user create "$WP_USER" "$WP_USER_EMAIL" --allow-root --path=/var/www/html \
 		--role=author --user_pass="$WP_USER_PASSWORD"
 	chown -R nobody:nobody /var/www/html

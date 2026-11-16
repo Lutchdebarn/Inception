@@ -13,6 +13,8 @@ RUN apk add --no-cache \
 
 RUN ln -s /usr/bin/php83 /usr/bin/php
 
+RUN sed -i 's/^memory_limit = .*/memory_limit = 256M/' /etc/php83/php.ini
+
 COPY conf/www.conf /etc/php83/php-fpm.d/www.conf
 
 RUN curl -fsSL -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
