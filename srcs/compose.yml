@@ -6,7 +6,7 @@ services:
     build:
       context: requirements/mariadb
       dockerfile: Dockerfile
-      image: mariadb
+    image: mariadb
     env_file: .env
     volumes:
       - db_data:/var/lib/mysql
@@ -26,7 +26,7 @@ services:
     build:
       context: requirements/nginx
       dockerfile: Dockerfile
-      image: nginx
+    image: nginx
     volumes:
       - wordpress:/var/www/html
     depends_on:
@@ -42,7 +42,7 @@ services:
     build:
       context: requirements/wordpress
       dockerfile: Dockerfile
-      image: wordpress
+    image: wordpress
     env_file: .env
     volumes:
       - wordpress:/var/www/html
