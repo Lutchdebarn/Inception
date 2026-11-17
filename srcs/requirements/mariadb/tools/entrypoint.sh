@@ -17,9 +17,9 @@ DROP USER IF EXISTS ''@'localhost';
 DROP USER IF EXISTS ''@'$(hostname)';
 DROP DATABASE IF EXISTS test;
 CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;
-CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}';
+CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '$(cat /run/secrets/db_password.txt)';
 GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO '${SQL_USER}'@'%';
-ALTER USER 'root'@'localhost' IDENTIFIED BY '${SQL_ROOT_PASSWORD}';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$(cat /run/secrets/db_root_password.txt)';
 FLUSH PRIVILEGES;
 EOF
 fi

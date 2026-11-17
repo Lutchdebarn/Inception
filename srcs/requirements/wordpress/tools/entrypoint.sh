@@ -17,10 +17,10 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
 	wp core install --allow-root --path=/var/www/html \
 		--url="https://$DOMAIN_NAME" --title="$WP_TITLE" \
-		--admin_user="$WP_ADMIN_USER" --admin_password="$WP_ADMIN_PASSWORD" \
+		--admin_user="$WP_ADMIN_USER" --admin_password="$(cat /run/secrets/wp_admin_password.txt)" \
 		--admin_email="$WP_ADMIN_EMAIL" --skip-email
 	wp user create "$WP_USER" "$WP_USER_EMAIL" --allow-root --path=/var/www/html \
-		--role=author --user_pass="$WP_USER_PASSWORD"
+		--role=author --user_pass="$(cat /run/secrets/wp_user_password.txt)"
 	chown -R nobody:nobody /var/www/html
 fi
 
