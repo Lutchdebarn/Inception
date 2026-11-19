@@ -53,6 +53,17 @@ services:
     expose:
       - "9000"
 
+  redis:
+    container_name: redis
+    networks:
+      - inception
+    build:
+      context: requirements/redis
+      dockerfile: Dockerfile
+    image: redis
+    restart: unless-stopped
+    expose: "6379"
+
 volumes:
   db_data:
     driver: local
