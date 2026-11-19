@@ -1,7 +1,5 @@
 #! /bin/sh
 
-#docker run --rm -e SQL_DATABASE=wp -e SQL_USER=wpuser -e SQL_PASSWORD=pass -e SQL_ROOT_PASSWORD=rootpass my-mariadb
-
 #stop at the first error
 set -e
 
@@ -17,9 +15,9 @@ DROP USER IF EXISTS ''@'localhost';
 DROP USER IF EXISTS ''@'$(hostname)';
 DROP DATABASE IF EXISTS test;
 CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;
-CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '$(cat /run/secrets/db_password.txt)';
+CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '$(cat /run/secrets/db_password)';
 GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO '${SQL_USER}'@'%';
-ALTER USER 'root'@'localhost' IDENTIFIED BY '$(cat /run/secrets/db_root_password.txt)';
+ALTER USER 'root'@'localhost' IDENTIFIED BY '$(cat /run/secrets/db_root_password)';
 FLUSH PRIVILEGES;
 EOF
 fi

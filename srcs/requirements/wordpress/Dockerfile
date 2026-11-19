@@ -9,8 +9,7 @@ RUN apk add --no-cache \
 	php83-mysqli php83-curl php83-mbstring php83-xml php83-gd \
 	php83-openssl php83-phar php83-iconv php83-ctype php83-dom \
 	php83-session php83-zip php83-fileinfo php83-tokenizer \
-	curl mariadb-client \
-	php83-pecl-redis-6.3.0-r0
+	curl mariadb-client php83-pecl-redis
 
 RUN ln -s /usr/bin/php83 /usr/bin/php
 

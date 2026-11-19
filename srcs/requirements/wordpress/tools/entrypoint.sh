@@ -12,8 +12,8 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 	wp core download --allow-root --path=/var/www/html
 
 	wp config create --allow-root --path=/var/www/html \
-		--dbname="$(cat /run/secrets/db_password.txt)" --dbuser="$SQL_USER" \
-		--dbpass="$(cat /run/secrets/db_root_password.txt)" --dbhost=mariadb
+		--dbname="$SQL_DATABASE" --dbuser="$SQL_USER" \
+		--dbpass="$(cat /run/secrets/db_password)" --dbhost=mariadb
 
 	wp core install --allow-root --path=/var/www/html \
 		--url="https://$DOMAIN_NAME" --title="$WP_TITLE" \
@@ -22,6 +22,8 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
 	wp config set WP_REDIS_HOST redis --allow-root --path=/var/www/html
 	wp config set WP_REDIS_PORT --raw 6379 --allow-root --path=/var/www/html
+	wp plugin install redis-cache --activate --allow-root --path=/var/www/html
+	wp redis enable --allow-root --path=/var/www/html
 
 	wp user create "$WP_USER" "$WP_USER_EMAIL" --allow-root --path=/var/www/html \
 		--role=author --user_pass="$(cat /run/secrets/wp_user_password)"

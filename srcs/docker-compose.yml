@@ -15,6 +15,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    secrets:
+      - db_password
+      - db_root_password
     restart: unless-stopped
     expose:
       - "3306"
@@ -49,6 +52,12 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
     restart: unless-stopped
     expose:
       - "9000"
@@ -60,9 +69,15 @@ services:
     build:
       context: requirements/redis
       dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     image: redis
     restart: unless-stopped
-    expose: "6379"
+    expose:
+      - "6379"
 
 volumes:
   db_data:
@@ -80,3 +95,13 @@ volumes:
 networks:
   inception:
     driver: bridge
+secrets:
+  db_password:
+    file: ../secrets/db_password
+  db_root_password:
+    file: ../secrets/db_root_password
+  wp_admin_password:
+    file: ../secrets/wp_admin_password
+  wp_user_password:
+    file: ../secrets/wp_user_password
+
