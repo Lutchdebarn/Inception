@@ -79,6 +79,25 @@ services:
     expose:
       - "6379"
 
+  ftp:
+    container_name: ftp
+    networks:
+      - inception
+    build:
+      context: requirements/ftp
+      dockerfile: Dockerfile
+    image: ftp
+    restart: unless-stopped
+    secrets:
+      - ftp_password
+    volumes:
+      - wordpress:/var/www/html
+    environment:
+      - FTP_USER=${FTP_USER:?FTP_USER missing in .env file}
+    ports:
+      - "21:21"
+      - "21000-21010:21000-21010"
+
 volumes:
   db_data:
     driver: local
@@ -99,9 +118,10 @@ secrets:
   db_password:
     file: ../secrets/db_password
   db_root_password:
-    file: ../secrets/db_password_root
+    file: ../secrets/db_root_password
   wp_admin_password:
     file: ../secrets/wp_admin_password
   wp_user_password:
     file: ../secrets/wp_user_password
-
+  ftp_password:
+    file: ../secrets/ftp_password
