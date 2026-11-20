@@ -34,6 +34,7 @@ services:
       - wordpress:/var/www/html
     depends_on:
       - wordpress
+      - static
     ports:
       - "443:443"
     restart: unless-stopped
@@ -97,6 +98,18 @@ services:
     ports:
       - "21:21"
       - "21000-21010:21000-21010"
+
+  static:
+    container_name: static
+    networks:
+      - inception
+    build:
+      context: requirements/static
+      dockerfile: Dockerfile
+    image: static
+    restart: unless-stopped
+    expose:
+      - "80"
 
 volumes:
   db_data:
