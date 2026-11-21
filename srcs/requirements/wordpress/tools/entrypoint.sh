@@ -22,6 +22,8 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
 	wp config set WP_REDIS_HOST redis --allow-root --path=/var/www/html
 	wp config set WP_REDIS_PORT --raw 6379 --allow-root --path=/var/www/html
+	wp config set WP_REDIS_PASSWORD "$(cat /run/secrets/redis_password)" --allow-root --path=/var/www/html
+	
 	wp plugin install redis-cache --activate --allow-root --path=/var/www/html
 	wp redis enable --allow-root --path=/var/www/html
 

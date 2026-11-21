@@ -6,7 +6,7 @@ services:
     build:
       context: requirements/mariadb
       dockerfile: Dockerfile
-    image: mariadb
+    image: mariadb:inception
     env_file: .env
     volumes:
       - db_data:/var/lib/mysql
@@ -29,7 +29,7 @@ services:
     build:
       context: requirements/nginx
       dockerfile: Dockerfile
-    image: nginx
+    image: nginx:inception
     volumes:
       - wordpress:/var/www/html
     depends_on:
@@ -46,7 +46,7 @@ services:
     build:
       context: requirements/wordpress
       dockerfile: Dockerfile
-    image: wordpress
+    image: wordpress:inception
     env_file: .env
     volumes:
       - wordpress:/var/www/html
@@ -59,6 +59,7 @@ services:
       - db_password
       - wp_admin_password
       - wp_user_password
+      - redis_password
     restart: unless-stopped
     expose:
       - "9000"
@@ -71,11 +72,13 @@ services:
       context: requirements/redis
       dockerfile: Dockerfile
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping"]
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$(cat /run/secrets/redis_password) redis-cli ping | grep -q PONG"]
       interval: 5s
       timeout: 3s
       retries: 10
-    image: redis
+    image: redis:inception
+    secrets:
+      - redis_password
     restart: unless-stopped
     expose:
       - "6379"
@@ -87,7 +90,7 @@ services:
     build:
       context: requirements/ftp
       dockerfile: Dockerfile
-    image: ftp
+    image: ftp:inception
     restart: unless-stopped
     secrets:
       - ftp_password
@@ -106,7 +109,7 @@ services:
     build:
       context: requirements/static
       dockerfile: Dockerfile
-    image: static
+    image: static:inception
     restart: unless-stopped
     expose:
       - "80"
@@ -136,5 +139,7 @@ secrets:
     file: ../secrets/wp_admin_password
   wp_user_password:
     file: ../secrets/wp_user_password
+  redis_password:
+    file: ../secrets/redis_password
   ftp_password:
     file: ../secrets/ftp_password
