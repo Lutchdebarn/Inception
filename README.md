@@ -2,22 +2,36 @@
 
 # Description
 
-What's the difference between VM and Docker ?
-
-The docker is a container and it's major difference is he only a choosen distrib
-and he use the OS of the host so he is really more portable than a VM.
-The VM has a OS and think is a physical machine with the Hypervisor who communicate
-with the phyisical system
+### VM vs DOCKER
+##### A VM is more isolated but heavier and slower to start.
+##### A container is lightweight and quick to setup. But it provides less isolation
 
 The purpose of this project is to create the infrastructure with no dependencies
-for a standart website including nginx, mariadb and wordpress.
+for a standard website including nginx, mariadb and wordpress.
 
-No secret or .env file has to be commited
 
-All of this tools has to be isolate in a single container, the only entry port
-for public has to be nginx in reverse proxy for the https.
+All of these services are isolated in its own container and they communicate in
+the Docker Network with no daemon so each service runs in the foreground
+as PID1 as the subject requires, the only entry port
+for public is nginx in reverse proxy for the https with the port 443.
+### Docker network vs Host network
+##### The docker network use his own network(DNS etc..) and allows to communicate with internal
+##### ports and with named containers. The host network share the host machine's networks, without isolation
+and the subject forbids it
 
-The containers can communicate in the Dockernetwork with private port for security
+The volumes are volumes named and the storage are available on /home/ludebarn/data of the host machine.
+### docker volume vs bind mount
+##### Docker manage his volume like an object. Bind mount is just a path from the host
+
+No secrets or .env have been committed during the project. I used secrets for password
+because I'm giving .env file for some containers and they don't need to have access of
+some password.
+### .Env vs secrets
+##### A secrets is a file in memory given only to
+##### the chosen service and a variable environment is visible with docker inspect and env
+
+
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -43,27 +57,39 @@ flowchart LR
 	db -. "/var/lib/mysql" .- voldb
 ```
 
-# How to use
-For compile this program we need only one command
+# Instructions
+
+To build and start the project, run
 ```
-make
+make up
 ```
-For down the container
+
+Stop the containers
 ```
 make down
 ```
-For restart container
+
+Wipes everything, including data, then rebuilds
 ```
 make re
 ```
 
-# Ressources
+Wipes everything
+```
+make fclean
+```
 
-For this project i used these documentations:
+# Resources
 
+For this project I used these documentations:
 https://docs.docker.com
 https://wordpress.org/documentation/
 https://mariadb.com/docs
 https://inception.cluzet.fr
 https://developer.mozilla.org/fr/docs/Learn_web_development/Core/Styling_basics/Getting_started
+https://redis.io/docs/latest/
+https://www.adminer.org/
 
+## AI usage
+I used Claude for making my static website, DEV_DOC and USER_DOC.
+I used it too to explain some concepts like redis, adminer, and the volumes and to proofread my script during all the project.
