@@ -127,6 +127,24 @@ services:
     expose:
       - "9000"
 
+  backup:
+    container_name: backup
+    networks:
+      - inception
+    build:
+      context: requirements/backup
+      dockerfile: Dockerfile
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    image: backup:inception
+    secrets:
+      - db_password
+    env_file: .env
+    volumes:
+      - backup:/backup
+    restart: unless-stopped
+
 volumes:
   db_data:
     driver: local
@@ -140,6 +158,13 @@ volumes:
       type: none
       o: bind
       device: /home/ludebarn/data/wordpress
+  backup:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/ludebarn/backup
+
 networks:
   inception:
     driver: bridge
