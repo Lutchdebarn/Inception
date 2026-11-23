@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Expériences - Lucas Debarnot</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<header>
+			<h1>Lucas Debarnot</h1>
+			<p class="role">DevSecOps junior</p>
+			<nav>
+				<ul>
+					<li><a href="index.html">Accueil</a></li>
+					<li><a class="current" href="experience.html">Expériences</a></li>
+					<li><a href="education.html">Formations</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main>
+			<section>
+				<h2>Projets d'équipe, 42 Lausanne</h2>
+
+				<h3>DevOps, ft_transcendence</h3>
+				<p class="meta">2026</p>
+				<ul>
+					<li>Conteneurisation de la stack (NestJS, PostgreSQL, React) avec Docker Compose et healthchecks</li>
+					<li>Pipeline CI GitHub Actions : install, lint, build</li>
+					<li>Reverse proxy nginx en HTTPS, génération des certificats TLS</li>
+					<li>Monitoring Prometheus / Grafana (en cours)</li>
+				</ul>
+
+				<h3>Réseau et CGI, webserv (C++98)</h3>
+				<p class="meta">2026</p>
+				<ul>
+					<li>Serveur HTTP/1.1 non bloquant écrit de zéro, configurable comme nginx</li>
+					<li>Boucle d'événements sur poll() et gestion du cycle de vie des connexions</li>
+					<li>Intégration CGI : fork/exec, pipes non bloquants, erreur 502 en cas d'échec</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Sécurité et autres projets</h2>
+				<ul>
+					<li>CTF Insomni'hack (EPFL) : injection SQL, failles JWT/JWK, web</li>
+					<li>Inception : infrastructure multi-conteneurs Docker</li>
+					<li>minishell, pipex, philosophers, push_swap, fract-ol</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Autres expériences</h2>
+
+				<h3>Chargé de formation poker, LeKoL</h3>
+				<p class="meta">2025, Lausanne</p>
+				<ul>
+					<li>Conception de formations personnalisées</li>
+					<li>Analyse des besoins clients et adaptation du contenu</li>
+					<li>Suivi des clients après la formation</li>
+				</ul>
+
+				<h3>Aide en construction métallique, T-Metal</h3>
+				<p class="meta">2022-2024, Montreux</p>
+				<ul>
+					<li>Travail en atelier et sur chantier</li>
+					<li>Fabrication et pose d'ouvrages métalliques (portes, barrières, portails)</li>
+					<li>Soudure, prise de cotes, débitage, meulage</li>
+				</ul>
+
+				<h3>Croupier, chef de table, divers casinos</h3>
+				<p class="meta">2017-2022, Dinant et Montreux</p>
+				<ul>
+					<li>Animation de jeux de table (black-jack, roulette, poker, dés)</li>
+					<li>Surveillance des tables et conseil à la clientèle</li>
+					<li>Comptages à l'ouverture et à la fermeture des tables</li>
+				</ul>
+
+				<h3>Technicien de comptoir, TNT</h3>
+				<p class="meta">2015-2016, Lyon</p>
+				<ul>
+					<li>Saisie et suivi des flux logistiques via un logiciel métier (TMS)</li>
+					<li>Analyse et résolution de litiges, respect des procédures de traçabilité</li>
+				</ul>
+			</section>
+		</main>
+
+		<footer>
+			<p>Site statique : HTML et CSS, servi par un conteneur Docker (projet Inception).</p>
+		</footer>
+	</body>
+</html>

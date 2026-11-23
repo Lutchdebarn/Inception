@@ -1,35 +1,78 @@
 <!DOCTYPE html>
 <html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Lucas Debarnot - DevSecOps</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<header>
+			<h1>Lucas Debarnot</h1>
+			<p class="role">DevSecOps junior</p>
+			<nav>
+				<ul>
+					<li><a class="current" href="index.html">Accueil</a></li>
+					<li><a href="experience.html">Expériences</a></li>
+					<li><a href="education.html">Formations</a></li>
+				</ul>
+			</nav>
+		</header>
 
-<head>
-	<meta charset="UTF-8">
-	<title>CV Lucas Debarnot</title>
-	<link rel="stylesheet" href="style.css">
-	<style>
-		p {
-			color: purple;
-		}
-	</style>
-</head>
+		<main>
+			<section>
+				<h2>À propos</h2>
+				<p>
+					Étudiant à 42 Lausanne depuis octobre 2025, tuteur et membre du bureau
+					des étudiants. En charge du DevOps de l'équipe ft_transcendence
+					(Docker, CI/CD, nginx/TLS, Prometheus, Grafana).
+				</p>
+				<p>
+					Initié à la sécurité offensive en CTF (Insomni'hack). Je recherche un
+					poste DevSecOps junior ou un stage de 6 mois dans le canton de Vaud.
+				</p>
+			</section>
 
-<body>
-	<h1>Presentation d'un CV pour ma page web static</h1>
-</body>
-<p>
-	Ce fichier html a ete creer a l'aide de cette source
-	<a href="https://developer.mozilla.org/fr/docs/Learn_web_development/Core/Styling_basics/Getting_started">lien</a>.
-</p>
-<h1> Experiences</h1>
-<p>
-	Ceci est le deuxième paragraphe. Il contient un élément !
-	<em>emphasized</em>.
-</p>
-<nav>
-	<ul>
-		<li>About me <a href="about.html"></a></li>
-		<li>Élément deux</li>
-		<li>Élément <em>trois</em></li>
-	</ul>
-</nav>
+			<section>
+				<h2>Langages</h2>
+				<ul class="tags">
+					<li>C</li>
+					<li>C++98</li>
+					<li>Bash / Shell</li>
+					<li>YAML</li>
+					<li>JavaScript (en cours)</li>
+					<li>Python (en cours)</li>
+				</ul>
+			</section>
 
+			<section>
+				<h2>Outils et systèmes</h2>
+				<ul class="tags">
+					<li>Docker</li>
+					<li>Docker Compose</li>
+					<li>GitHub Actions (CI/CD)</li>
+					<li>Nginx (reverse proxy, TLS)</li>
+					<li>Linux / Unix</li>
+					<li>Git</li>
+					<li>TCP/IP, HTTP/1.1</li>
+					<li>Prometheus (en cours)</li>
+					<li>Grafana (en cours)</li>
+					<li>Vault (en cours)</li>
+					<li>Ansible (en cours)</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Liens</h2>
+				<ul>
+					<li><a href="https://github.com/lutchdebarn">GitHub</a></li>
+					<li><a href="https://linkedin.com/in/lucas-debarnot">LinkedIn</a></li>
+				</ul>
+			</section>
+		</main>
+
+		<footer>
+			<p>Site statique : HTML et CSS, servi par un conteneur Docker (projet Inception).</p>
+		</footer>
+	</body>
 </html>
