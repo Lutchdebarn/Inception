@@ -20,7 +20,8 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
 	wp config create --allow-root --path="$WP_PATH" \
 		--dbname="$SQL_DATABASE" --dbuser="$SQL_USER" \
 		--dbpass="$(cat /run/secrets/db_password)" --dbhost=mariadb
-
+fi
+if ! wp plugin is-installed redis-cache; then
 	wp config set WP_REDIS_HOST redis --allow-root --path="$WP_PATH"
 	wp config set WP_REDIS_PORT --raw 6379 --allow-root --path="$WP_PATH"
 	wp config set WP_REDIS_PASSWORD "$(cat /run/secrets/redis_password)" --allow-root --path="$WP_PATH"

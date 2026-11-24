@@ -9,9 +9,9 @@ services:
     image: mariadb:inception
     env_file: .env
     volumes:
-      - db_data:/var/lib/mysql
+      - database:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mariadb-admin ping"]
+      test: [ "CMD-SHELL", "mariadb-admin ping" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -73,7 +73,7 @@ services:
       context: requirements/redis
       dockerfile: Dockerfile
     healthcheck:
-      test: ["CMD-SHELL", "REDISCLI_AUTH=$$(cat /run/secrets/redis_password) redis-cli ping | grep -q PONG"]
+      test: [ "CMD-SHELL", "REDISCLI_AUTH=$$(cat /run/secrets/redis_password) redis-cli ping | grep -q PONG" ]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -146,7 +146,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  db_data:
+  database:
     driver: local
     driver_opts:
       type: none

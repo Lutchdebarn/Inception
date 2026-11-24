@@ -1,11 +1,11 @@
 # User documentation
 
 This guide is for the person who uses or administers the running stack.
-It explains what the stack provides, how to start and stop it, how to reach each service, where the credentials are, and how to check that everything works.
+It explains what the stack provides, how to start and stop it, how to reach each service, where the credentials are, how backups work, and how to check that everything works.
 
 ## 1. What the stack provides
 
-The project runs seven services. Each one runs in its own Docker container.
+The project runs eight services. Each one runs in its own Docker container.
 
 | Service | Role | Reachable from outside? |
 |---|---|---|
@@ -16,11 +16,13 @@ The project runs seven services. Each one runs in its own Docker container.
 | **adminer** | A web page to browse the database. | Through nginx, at `/adminer` |
 | **static** | A small static website (a CV). | Through nginx, at `/site/` |
 | **ftp** | FTP server. Gives access to the WordPress files. | Yes, ports 21 and 21000-21010 |
+| **backup** | Makes regular copies of the database. | No (internal) |
 
-Your data is kept in two folders on the host machine:
+Your data is kept in three folders on the host machine:
 
 - `/home/ludebarn/data/mariadb`: the database.
 - `/home/ludebarn/data/wordpress`: the WordPress files (themes, plugins, uploads).
+- `/home/ludebarn/backup`: the database backups.
 
 ## 2. Start and stop the project
 
@@ -31,14 +33,18 @@ Run these commands from the root of the repository.
 | Build and start everything | `make` (or `make up`) |
 | Stop and remove the containers (data is kept) | `make down` |
 | Stop, and remove the containers and images (data is kept) | `make clean` |
-| Remove **everything**: containers, images, volumes and data | `make fclean` |
+| Remove containers, images, volumes and the data | `make fclean` |
 | Wipe everything and start again from scratch | `make re` |
 
 **Warning:** `make fclean` and `make re` delete `/home/ludebarn/data`.
 The website content and the database are lost.
+The backups in `/home/ludebarn/backup` are **not** deleted.
 For a normal restart, use `make down` then `make up`.
 
 The first start takes longer. WordPress is downloaded and installed automatically.
+
+**After a reboot of the machine,** the containers start again by themselves (unless you ran `make down` before).
+For a minute, some containers may restart while the others come up. This is normal.
 
 ## 3. Access the services
 
@@ -54,7 +60,7 @@ Add this line to `/etc/hosts` (needs `sudo`):
 | WordPress administration panel | https://ludebarn.42.fr/wp-admin |
 | Adminer (database) | https://ludebarn.42.fr/adminer |
 | Static website (CV) | https://ludebarn.42.fr/site/ |
-| FTP server | `ludebarn.42.fr`, port 21 |
+| FTP server | `localhost`, port 21 (from the machine that runs the containers) |
 
 The certificate is self-signed.
 The browser shows a security warning.
@@ -79,16 +85,30 @@ The database account is limited to the WordPress database. You only see that dat
 
 ### FTP
 
-Connect with any FTP client.
-- Host: the VM address, port 21.
-- Username: `FTP_USER` from `srcs/.env`.
-- Password: the content of `secrets/ftp_password`.
+**Web browsers no longer support FTP.** Do not type an `ftp://` address or `localhost:21` in a browser.
+Use an FTP client, such as FileZilla.
+
+In FileZilla, fill in the quick-connect bar:
+
+| Field | Value |
+|---|---|
+| Host | `localhost` |
+| Username | `FTP_USER` from `srcs/.env` |
+| Password | the content of `secrets/ftp_password` |
+| Port | `21` |
+
+The server has no encryption. If FileZilla warns about TLS, choose "Use plain FTP" in the site settings.
 
 You land in the WordPress files. You can download and upload files.
+A file uploaded to this folder is also served by the website.
+For example, uploading `demo.txt` makes it available at `https://ludebarn.42.fr/demo.txt`.
+
 A quick test from the command line (the password is asked, so it is not stored in your history):
 ```bash
-curl -u <FTP_USER> ftp://localhost/
+curl -u <FTP_USER> ftp://localhost/                          # list the files
+curl -u <FTP_USER> -T /tmp/demo.txt ftp://localhost/demo.txt  # upload a file
 ```
+The address must start with `ftp://`, not `http://`.
 
 FTP does not encrypt anything. The password and the files travel in clear text. Use it only on a trusted network.
 
@@ -102,7 +122,8 @@ They are in two places on your machine.
 - the database name and the database user,
 - the WordPress site title,
 - the usernames and e-mail addresses of the two WordPress users,
-- the FTP username.
+- the FTP username,
+- the backup schedule.
 
 **`secrets/`** holds the passwords, one file per password:
 
@@ -125,13 +146,36 @@ To log in, use the username from `srcs/.env` and the matching password file.
 Editing a file later does not change an existing account.
 To apply new values, run `make re`. This deletes all data.
 
-## 5. Check that the services are running
+## 5. Backups
+
+The `backup` service copies the WordPress database to a file at a regular time.
+
+- **Where:** `/home/ludebarn/backup`. This folder is outside `/home/ludebarn/data`, so `make fclean` does not delete it.
+- **File names:** `<database>_<date>_<time>.sql`, for example `wordpress_2026-11-24_14-30.sql`.
+- **When:** the schedule is the `BACKUP_SCHEDULE` value in `srcs/.env`. It uses the cron format. The default `*/10 * * * *` means every 10 minutes. This is a short delay for demonstration. In production, a nightly schedule such as `0 3 * * *` is more usual.
+- **Retention:** copies older than 60 minutes are deleted, so the folder does not grow without limit.
+
+**Make a backup now:**
+```bash
+docker exec backup /usr/local/bin/backup.sh
+ls /home/ludebarn/backup
+```
+
+**Restore a backup.** The file is a list of SQL commands. Replaying it puts the database back in the state of the copy.
+Everything created after the copy is lost.
+```bash
+docker exec backup sh -c 'MYSQL_PWD="$(cat /run/secrets/db_password)" mariadb -h mariadb -u "$SQL_USER" "$SQL_DATABASE" < /backup/<file>.sql'
+docker exec wordpress wp cache flush --allow-root --path=/var/www/html
+```
+Replace `<file>` with the name of the backup. The second command empties the Redis cache, so the site does not show old data.
+
+## 6. Check that the services are running
 
 **All containers at once:**
 ```bash
 docker ps
 ```
-Expect seven containers: `nginx`, `wordpress`, `mariadb`, `redis`, `ftp`, `static`, `adminer`.
+Expect eight containers: `nginx`, `wordpress`, `mariadb`, `redis`, `ftp`, `static`, `adminer`, `backup`.
 `mariadb` and `redis` should show `(healthy)`.
 
 **The website answers over HTTPS:**
@@ -164,6 +208,13 @@ docker exec wordpress wp redis status --allow-root --path=/var/www/html
 ```
 Expect `Status: Connected`.
 
+**The backup schedule is set, and files appear:**
+```bash
+docker exec backup cat /etc/crontabs/root
+ls /home/ludebarn/backup
+```
+The first command shows one line with the schedule and the script. A new file appears at each scheduled time.
+
 **Something is wrong?** Read the logs of the container:
 ```bash
 docker logs nginx
@@ -173,12 +224,15 @@ docker logs redis
 docker logs ftp
 docker logs static
 docker logs adminer
+docker logs backup
 ```
 
 | Symptom | Likely cause |
 |---|---|
 | `502 Bad Gateway` | WordPress is still installing, or its container is restarting. Wait, then check `docker logs wordpress`. |
-| Redirect to `/wp-admin/install.php` | The WordPress installation failed. Check `docker logs wordpress`, then run `make re`. |
+| Redirect to `/wp-admin/install.php` | The WordPress installation did not finish. Check `docker logs wordpress`. The container retries at each start. |
 | A new comment does not appear | It is waiting for moderation. Approve it in the administration panel. |
 | Adminer says `No such file or directory` | The server field is `localhost` or empty. Use `mariadb`. |
+| The browser says the address is restricted when opening `localhost:21` | Browsers block port 21 and no longer support FTP. Use an FTP client. |
 | FTP upload fails with `553` | The FTP user cannot write to the WordPress files. Check `docker logs ftp`. |
+| No file appears in `/home/ludebarn/backup` | `BACKUP_SCHEDULE` is missing in `srcs/.env`, or the database was not ready. Check `docker exec backup cat /etc/crontabs/root`. |
